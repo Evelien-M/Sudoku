@@ -21,7 +21,6 @@ namespace Sudoku
 
         public CalcRandom(int[,] grid)
         {
-            Console.WriteLine("Preparing...");
             this.input = grid;
 
             this.output = this.input.Clone() as int[,];
@@ -29,7 +28,6 @@ namespace Sudoku
             this.rng = new Random();
             this.tile = new Moves();
             this.CreateGrid();
-
 
             this.allInputs = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 

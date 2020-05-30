@@ -15,8 +15,14 @@ namespace Sudoku
         public Algorithm(int[,] grid)
         {
             this.grid = grid;
+            Console.WriteLine("Preparing...");
+            // this.CallCalc(5);
+            Calculator c = new Calculator(grid);
 
-            this.CallCalc(10);
+            this.grid = c.output;
+            View.Write(this.grid);
+            this.CallCalc(5);
+
             this.CheckSolution();
         }
 
