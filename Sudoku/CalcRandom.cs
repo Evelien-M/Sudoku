@@ -93,7 +93,7 @@ namespace Sudoku
                 else
                 {
                     Console.WriteLine("Sollution found!");
-                    View.Write(output);
+                    Algorithm.output = output;
                     Algorithm.succeeded = true;
                 }
             }

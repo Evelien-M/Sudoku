@@ -117,20 +117,8 @@ namespace Sudoku
         {
             string key = y + "" + x;
             var list = this.inputs[key].List;
-            this.Shuffle(list);
+            RNG.Shuffle(list);
             return list;
-        }
-
-        public void Shuffle<T>(List<T> array)
-        {
-            int n = array.Count;
-            while (n > 1)
-            {
-                int k = rng.Next(n--);
-                T temp = array[n];
-                array[n] = array[k];
-                array[k] = temp;
-            }
         }
 
         /*  private void Update()

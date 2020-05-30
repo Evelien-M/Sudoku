@@ -10,14 +10,22 @@ namespace Sudoku
         public static bool succeeded;
         public static bool failed;
         private int[,] grid;
+        public static int[,] output;
 
         public Algorithm(int[,] grid)
         {
             this.grid = grid;
 
-            CalcRandom c1 = new CalcRandom(grid);
+            this.CallCalc(10);
+            this.CheckSolution();
+        }
 
-            this.CallCalc(2);
+        private void CheckSolution()
+        {
+            if (succeeded)
+            {
+                View.Write(output);
+            }
         }
 
         private void CallCalc(int amount)
