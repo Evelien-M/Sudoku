@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace Sudoku
 {
-    public class Tile
+    public class Moves
     {
         private Random rng;
         public bool failed;
@@ -16,7 +16,7 @@ namespace Sudoku
         private Counter last;
         public static int test;
         Dictionary<string, Counter> inputs;
-        public Tile()
+        public Moves()
         {
             this.rng = new Random();
             this.amount = 0; // possible inputs;
@@ -210,7 +210,7 @@ namespace Sudoku
 
             private void Shuffle()
             {
-                Tile.test++;
+                Moves.test++;
                 int end = List[0];
 
                 for (int i = 0; i < List.Count; i++)

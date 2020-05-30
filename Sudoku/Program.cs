@@ -8,8 +8,10 @@ namespace Sudoku
         {
             var c = new Creator();
             var grid = c.Get();
+            View.Write(grid);
 
-            Calc c1 = new Calc(grid);
+            new Algorithm(grid);
+
 
             Console.ReadLine();
         }

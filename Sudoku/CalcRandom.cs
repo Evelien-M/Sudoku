@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace Sudoku
 {
-    public class Calc
+    public class CalcRandom
     {
         private bool running;
         private int[,] input;
@@ -14,12 +14,12 @@ namespace Sudoku
         private int[] allInputs;
         private Dictionary<string, List<int>> grids;
         private Random rng;
-        private Tile tile;
+        private Moves tile;
 
         private bool feedback = false;
         private bool rngSlow = true;
 
-        public Calc(int[,] grid)
+        public CalcRandom(int[,] grid)
         {
             Console.WriteLine("Preparing...");
             this.input = grid;
@@ -27,7 +27,7 @@ namespace Sudoku
             this.output = this.input.Clone() as int[,];
 
             this.rng = new Random();
-            this.tile = new Tile();
+            this.tile = new Moves();
             this.CreateGrid();
 
 
@@ -42,16 +42,8 @@ namespace Sudoku
 
       
 
-            Console.WriteLine("Working...");
-            if (this.Start())
-            {
-                Console.WriteLine("Sollution found!");
-                View.Write(output);
-            }
-            else
-            {
-                Console.WriteLine("It failed");
-            }
+            
+
         }
 
         private void CreateGrid()
@@ -87,27 +79,10 @@ namespace Sudoku
             }
         }
 
-        private void Threading(int amount)
+        public void Start(object parameter)
         {
-            for (int i = 0; i < amount; i++)
-            {
-                Thread newThread = new Thread(new ParameterizedThreadStart(Run));
-                newThread.Start();
-            }
-        }
-
-
-        private void Run(object parameter)
-        {
-            while (this.running)
-            {
-                this.Start();
-            }
-        }
-
-        private bool Start()
-        {
-            while(!tile.failed)
+            Console.WriteLine("Working...");
+            while (!Algorithm.succeeded)
             {
                 if (!this.Check())
                 {
@@ -117,11 +92,11 @@ namespace Sudoku
                 }
                 else
                 {
-                    this.running = false;
-                    return true;
+                    Console.WriteLine("Sollution found!");
+                    View.Write(output);
+                    Algorithm.succeeded = true;
                 }
             }
-            return false;
         }
 
         private bool Check()
