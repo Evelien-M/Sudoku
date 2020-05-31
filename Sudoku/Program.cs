@@ -9,9 +9,9 @@ namespace Sudoku
             var c = new Creator();
             var grid = c.Get();
             View.Write(grid);
+            Console.WriteLine("Preparing...");
 
-            new Algorithm(grid);
-
+            new Calculator(grid);
 
             Console.ReadLine();
         }

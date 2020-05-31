@@ -26,7 +26,6 @@ namespace Sudoku
 
             this.possibleMoves = new SortedDictionary<string, LinkedMoves>();
 
-
             this.Start();
         }
 
@@ -43,17 +42,37 @@ namespace Sudoku
 
             if (this.possibleMoves.Count == 0)
             {
-                Console.WriteLine("Solution found!");
-                View.Write(this.output);
+                if (this.IsCompleted())
+                {
+                    Console.WriteLine("Solution found!");
+                    View.Write(this.output);
+                }
+                else
+                {
+                    Console.WriteLine("It is impossible!");
+                }
                 return;
             }
 
-            this.DebugPrintAll();
-            View.Write(this.output);
-
+            Console.WriteLine("Working...");
             this.CreateLinkedListStartAtLowestPossibleMoves();
             this.CreateLinkedList();
             this.LoopThrough();
+        }
+
+        private bool IsCompleted()
+        {
+            for (int y = 0; y < this.output.GetLength(0); y++)
+            {
+                for (int x = 0; x < this.output.GetLength(1); x++)
+                {
+                    if (this.output[y, x] == 0)
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
 
         #region Possibles
@@ -122,52 +141,6 @@ namespace Sudoku
             var a = this.possibleMoves.OrderBy(o => o.Value.Moves.Count);
             var b = a.Select(s => s.Key).ToArray();
             this.order = b;
-
-
-        }
-
-        private void Check()
-        {
-           for (int i = 0; i < order.Length; i++)
-           {
-                if (i != order.Length - 1) // check if end
-                {
-                    LinkedMoves m = this.possibleMoves[order[i]];
-
-                    bool goBack = true;
-                    for (int j = 0; j < m.Moves.Count; j++)
-                    {
-                        if (rules.CheckValid(m.Y, m.X, m.Moves[j]))
-                        {
-                            this.output[m.Y, m.X] = m.Moves[j];
-                            rules.AddToGrid(m.Y, m.X, m.Moves[j]);
-                            goBack = false;
-                            break;
-                        }
-                    }
-
-                    if (goBack)
-                    {
-                        if (i - 1 == -1)// loop is at beginning
-                        {
-                            Console.WriteLine("No solution found!");
-                            return;
-                        }
-                        
-
-                        i = i - 2;
-                    }
-                }
-           }
-            // take first value of possible move
-            // check if valid
-            // if valid check if next first value of possible move
-
-            // if not valid check next value is possible
-
-            // this.start.Next = this.possibleMoves[this.order[i + 1]];
-            // this.start.Next.Previous = this.start;
-            // done
         }
 
         private void CreateLinkedList()
@@ -176,7 +149,7 @@ namespace Sudoku
             {
                 if (this.start == null)
                 {
-                    this.end = this.possibleMoves[order[i]];
+                    this.end = this.possibleMoves[order[0]];
                     this.start = this.end;
                 }
                 else
@@ -237,6 +210,11 @@ namespace Sudoku
 
                         next = prev;
                     }
+                    else
+                    {
+                        Console.WriteLine("It is impossible!");
+                        return;
+                    }
                 }
                 else
                 {
@@ -244,29 +222,11 @@ namespace Sudoku
                     next = next.Next;
                 } 
             }
-         
+
+            Console.WriteLine("Solution found!");
             View.Write(this.output);
         }
 
-        private void DebugPrintAll()
-        {
-            Console.WriteLine("=================");
-            foreach (KeyValuePair<string, LinkedMoves> entry in this.possibleMoves)
-            {
-                Console.Write(entry.Key + "--------->");
-                this.DebugPrintList(entry.Value.Moves);
-            }
-            Console.WriteLine("=================");
-            Thread.Sleep(1000);
-        }
-        private void DebugPrintList(List<int> list)
-        {
-            foreach (int i in list)
-            {
-                Console.Write(" " + i + " ");
-            }
-            Console.WriteLine();
-        }
 
         
 
