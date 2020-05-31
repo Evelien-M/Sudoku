@@ -9,6 +9,7 @@ namespace Sudoku
         {
             var c = new Creator();
             var grid = c.Get();
+            Console.WriteLine("Starting grid:");
             View.Write(grid);
             Console.WriteLine("Preparing...");
 

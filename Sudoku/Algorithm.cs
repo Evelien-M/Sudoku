@@ -149,7 +149,7 @@ namespace Sudoku
         {
             if (Program.feedback)
             {
-                Console.WriteLine("Setting up order to loop through...");
+                Console.WriteLine("Ordering...");
             }
             this.order = new string[this.possibleMoves.Count];
 
@@ -160,10 +160,10 @@ namespace Sudoku
 
         private void CreateLinkedList()
         {
-            for (int i = 0; i < order.Length; i++)
+            for (int i = 0; i < this.order.Length; i++)
             {
                 if (Program.feedback)
-                        Console.Write(order[i] + "------>");
+                        Console.Write(this.order[i] + "------>");
 
                 if (this.start == null)
                 {
@@ -180,7 +180,10 @@ namespace Sudoku
             }
 
             if (Program.feedback)
+            {
                 Console.WriteLine();
+                Thread.Sleep(1000);
+            }
         }
 
         private void LoopThrough()
@@ -196,7 +199,7 @@ namespace Sudoku
                 }
                 List<int> nextMoves;
 
-                if (next.NextMoves != null) // next got called by next.next
+                if (next.NextMoves != null) // The next move didn't find any valid values, try different move
                 {
                     nextMoves = new List<int>(next.NextMoves);
                 }
@@ -209,14 +212,15 @@ namespace Sudoku
                 bool addToTemp = false;
                 for (int i = 0; i < nextMoves.Count; i++)
                 {
-                    if (rules.CheckValid(next.Y, next.X, nextMoves[i])) // is valid go to next move
+                    if (rules.CheckValid(next.Y, next.X, nextMoves[i]))
                     {
-                        if (addToTemp)
+                        if (addToTemp) // add all possible moves to NextMoves list, incase the next didn't find any valid values
                         {
                             temp.Add(nextMoves[i]);
                         }
                         else
                         {
+                            // place the first possible move on grid
                             addToTemp = true;
                             this.output[next.Y, next.X] = nextMoves[i];
                             rules.AddToGrid(next.Y, next.X, nextMoves[i]);
@@ -229,12 +233,12 @@ namespace Sudoku
                         }
                     }
                 }
-                if (!addToTemp) // can't place a value
+                if (!addToTemp) // can't place any value
                 {
                     var prev = next.Previous;
                     if (prev != null)
                     {
-                        // do move undone
+                        // do previous move undone
                         int value = this.output[prev.Y, prev.X];
                         this.output[prev.Y, prev.X] = 0;
                         rules.RemoveFromGrid(prev.Y, prev.X, value);
@@ -244,7 +248,7 @@ namespace Sudoku
 
                         if (Program.feedback)
                         {
-                            Console.WriteLine("Failed placing any values! Removing: " + value);
+                            Console.WriteLine("Failed placing any values! Removing: " + value + " from (" + prev.Y + "" + prev.X + ")");
                             View.Write(this.output);
                         }
                     }
@@ -254,7 +258,7 @@ namespace Sudoku
                         return;
                     }
                 }
-                else
+                else // go to next step
                 {
                     next.NextMoves = temp;
                     next = next.Next;

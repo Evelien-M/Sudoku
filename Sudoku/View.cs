@@ -43,7 +43,7 @@ namespace Sudoku
                 Console.WriteLine();
             }
             Console.WriteLine("-------------------------------");
-            Thread.Sleep(1000);
+            Thread.Sleep(500);
         }
     }
 }
