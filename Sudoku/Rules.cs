@@ -6,7 +6,6 @@ namespace Sudoku
 {
     class Rules
     {
-        private bool feedback = false;
         private int[,] grid;
         private Dictionary<string, List<int>> grids;
 
@@ -18,7 +17,7 @@ namespace Sudoku
 
         public bool CheckValid(int y, int x, int input)
         {
-            if (CheckHorizontal(y, input) && CheckVertical(x, input) && CheckGrid(y, x, input))
+            if (this.CheckHorizontal(y, input) && this.CheckVertical(x, input) && this.CheckGrid(y, x, input))
                 return true;
 
             return false;
@@ -28,10 +27,10 @@ namespace Sudoku
         {
             for (int x = 0; x < grid.GetLength(1); x++)
             {
-                if (grid[y, x] == input)
+                if (this.grid[y, x] == input)
                 {
-                    if (feedback)
-                        Console.WriteLine("Horizontal constrain on: " + grid[y, x]);
+                    if (Program.feedback)
+                        Console.WriteLine("Cannot place " + input + " due to a horizontal constrain on: " + this.grid[y, x]);
                     return false;
                 }
             }
@@ -39,12 +38,12 @@ namespace Sudoku
         }
         private bool CheckVertical(int x, int input)
         {
-            for (int y = 0; y < grid.GetLength(0); y++)
+            for (int y = 0; y < this.grid.GetLength(0); y++)
             {
-                if (grid[y, x] == input)
+                if (this.grid[y, x] == input)
                 {
-                    if (feedback)
-                        Console.WriteLine("Vertical constrain on: " + grid[y, x]);
+                    if (Program.feedback)
+                        Console.WriteLine("Cannot place " + input +" due to a vertical constrain on: " + this.grid[y, x]);
                     return false;
                 }
             }
@@ -62,9 +61,9 @@ namespace Sudoku
                 var l = this.grids[key];
                 if (l.Contains(input))
                 {
-                    if (this.feedback)
+                    if (Program.feedback)
                     {
-                        Console.WriteLine("Grid constrain on: " + input);
+                        Console.WriteLine("Cannot place " + input + " due to a grid constrain on: " + input);
                     }
                     return false;
                 }

@@ -4,6 +4,7 @@ namespace Sudoku
 {
     class Program
     {
+        public static bool feedback = false;
         static void Main(string[] args)
         {
             var c = new Creator();

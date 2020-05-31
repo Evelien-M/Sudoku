@@ -32,10 +32,21 @@ namespace Sudoku
         public void Start()
         {
             this.fillup = true;
+            int steps = 1;
+            if (Program.feedback)
+            {
+                Console.WriteLine("Filling up all the one move set tiles...");
+            }
             while (fillup)
             {
                 this.CreatePossible();
                 this.UpdatePossible();
+                if (Program.feedback)
+                {
+                    Console.WriteLine("Step " + steps);
+                    View.Write(this.output);
+                }
+                steps++;
             }
 
             this.CreatePossible();
@@ -55,7 +66,7 @@ namespace Sudoku
             }
 
             Console.WriteLine("Working...");
-            this.CreateLinkedListStartAtLowestPossibleMoves();
+            this.SortAmountPossibleMoves();
             this.CreateLinkedList();
             this.LoopThrough();
         }
@@ -134,8 +145,12 @@ namespace Sudoku
         }
         #endregion
 
-        private void CreateLinkedListStartAtLowestPossibleMoves()
+        private void SortAmountPossibleMoves()
         {
+            if (Program.feedback)
+            {
+                Console.WriteLine("Setting up order to loop through...");
+            }
             this.order = new string[this.possibleMoves.Count];
 
             var a = this.possibleMoves.OrderBy(o => o.Value.Moves.Count);
@@ -147,6 +162,9 @@ namespace Sudoku
         {
             for (int i = 0; i < order.Length; i++)
             {
+                if (Program.feedback)
+                        Console.Write(order[i] + "------>");
+
                 if (this.start == null)
                 {
                     this.end = this.possibleMoves[order[0]];
@@ -160,6 +178,9 @@ namespace Sudoku
                     temp.Next = this.end;
                 }
             }
+
+            if (Program.feedback)
+                Console.WriteLine();
         }
 
         private void LoopThrough()
@@ -168,6 +189,11 @@ namespace Sudoku
             
             while (next != null)
             {
+                if (Program.feedback)
+                {
+                    Console.WriteLine("==================================================================");
+                    Console.WriteLine("(" + next.Y + "" + next.X + ") Amount of moves: " + next.Moves.Count);
+                }
                 List<int> nextMoves;
 
                 if (next.NextMoves != null) // next got called by next.next
@@ -193,7 +219,13 @@ namespace Sudoku
                         {
                             addToTemp = true;
                             this.output[next.Y, next.X] = nextMoves[i];
-                            rules.AddToGrid(next.Y, next.X, nextMoves[i]);    
+                            rules.AddToGrid(next.Y, next.X, nextMoves[i]);
+                            
+                            if (Program.feedback)
+                            {
+                                Console.WriteLine("Succesfully placed: " + nextMoves[i]);
+                                View.Write(this.output);
+                            }
                         }
                     }
                 }
@@ -209,6 +241,12 @@ namespace Sudoku
                         next.NextMoves = null;
 
                         next = prev;
+
+                        if (Program.feedback)
+                        {
+                            Console.WriteLine("Failed placing any values! Removing: " + value);
+                            View.Write(this.output);
+                        }
                     }
                     else
                     {
@@ -226,11 +264,5 @@ namespace Sudoku
             Console.WriteLine("Solution found!");
             View.Write(this.output);
         }
-
-
-        
-
     }
-
-
 }
