@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace Sudoku
 {
-    class Calculator
+    class Algorithm
     {
         private int[,] input;
         public int[,] output;
@@ -18,7 +18,7 @@ namespace Sudoku
         private LinkedMoves start;
         private LinkedMoves end;
 
-        public Calculator(int[,] grid)
+        public Algorithm(int[,] grid)
         {
             this.input = grid;
             this.output = this.input.Clone() as int[,];

@@ -11,7 +11,7 @@ namespace Sudoku
             View.Write(grid);
             Console.WriteLine("Preparing...");
 
-            new Calculator(grid);
+            new Algorithm(grid);
 
             Console.ReadLine();
         }
