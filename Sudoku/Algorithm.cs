@@ -19,9 +19,9 @@ namespace Sudoku
             // this.CallCalc(5);
             Calculator c = new Calculator(grid);
 
-            this.grid = c.output;
+/*            this.grid = c.output;
             View.Write(this.grid);
-            this.CallCalc(5);
+            this.CallCalc(5);*/
 
             this.CheckSolution();
         }

@@ -9,6 +9,8 @@ namespace Sudoku
         public LinkedMoves Next { get; set; }
         public LinkedMoves Previous { get; set; }
         public List<int> Moves { get; private set; }
+
+        public List<int> NextMoves { get; set; }
         public int Y { get; private set; }
         public int X { get; private set; }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 
 namespace Sudoku
 {
@@ -42,6 +43,7 @@ namespace Sudoku
                 Console.WriteLine();
             }
             Console.WriteLine("-------------------------------");
+            Thread.Sleep(1000);
         }
     }
 }

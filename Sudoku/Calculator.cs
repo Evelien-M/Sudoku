@@ -48,8 +48,12 @@ namespace Sudoku
                 return;
             }
 
+            this.DebugPrintAll();
+            View.Write(this.output);
+
             this.CreateLinkedListStartAtLowestPossibleMoves();
             this.CreateLinkedList();
+            this.LoopThrough();
         }
 
         #region Possibles
@@ -113,65 +117,135 @@ namespace Sudoku
 
         private void CreateLinkedListStartAtLowestPossibleMoves()
         {
-            int moves = 9;
             this.order = new string[this.possibleMoves.Count];
-            int i = 0;
-            LinkedMoves l = new LinkedMoves(null,null);
-            foreach (KeyValuePair<string, LinkedMoves> entry in this.possibleMoves)
-            {
-                var a = entry.Value.Moves;
-                if (a.Count < moves)
-                {
-                    moves = a.Count;
-                    l = entry.Value;
-                    this.order[0] = entry.Key;
-                    i = 1;
-                }
-                else
-                {
-                    this.order[i] = entry.Key;
-                    i++;
-                } 
-            }
-            // go through skipped keys
-            foreach (KeyValuePair<string, LinkedMoves> entry in this.possibleMoves)
-            {
-                if (entry.Key.Equals(this.order[0]))
-                    break;
 
-                for (int j = 0; j < this.order.Length; j++)
+            var a = this.possibleMoves.OrderBy(o => o.Value.Moves.Count);
+            var b = a.Select(s => s.Key).ToArray();
+            this.order = b;
+
+
+        }
+
+        private void Check()
+        {
+           for (int i = 0; i < order.Length; i++)
+           {
+                if (i != order.Length - 1) // check if end
                 {
-                    if (this.order[j] == null)
+                    LinkedMoves m = this.possibleMoves[order[i]];
+
+                    bool goBack = true;
+                    for (int j = 0; j < m.Moves.Count; j++)
                     {
-                        this.order[j] = entry.Key;
-                        break;
+                        if (rules.CheckValid(m.Y, m.X, m.Moves[j]))
+                        {
+                            this.output[m.Y, m.X] = m.Moves[j];
+                            rules.AddToGrid(m.Y, m.X, m.Moves[j]);
+                            goBack = false;
+                            break;
+                        }
+                    }
+
+                    if (goBack)
+                    {
+                        if (i - 1 == -1)// loop is at beginning
+                        {
+                            Console.WriteLine("No solution found!");
+                            return;
+                        }
+                        
+
+                        i = i - 2;
                     }
                 }
-            }
-            this.start = l;
-            this.end = this.start;
+           }
+            // take first value of possible move
+            // check if valid
+            // if valid check if next first value of possible move
+
+            // if not valid check next value is possible
+
+            // this.start.Next = this.possibleMoves[this.order[i + 1]];
+            // this.start.Next.Previous = this.start;
+            // done
         }
 
         private void CreateLinkedList()
         {
-           for (int i = 0; i < order.Length; i++)
-           {
-                if (i != order.Length - 1)
+            for (int i = 0; i < order.Length; i++)
+            {
+                if (this.start == null)
                 {
-                    // take first value of possible move
-                    // check if valid
-                    // if valid check if next first value of possible move
-
-                    // if not valid check next value is possible
-
-                    // this.start.Next = this.possibleMoves[this.order[i + 1]];
-                    // this.start.Next.Previous = this.start;
-
-
+                    this.end = this.possibleMoves[order[i]];
+                    this.start = this.end;
                 }
-           }
+                else
+                {
+                    var temp = this.end;
+                    this.end = this.possibleMoves[order[i]];
+                    this.end.Previous = temp;
+                    temp.Next = this.end;
+                }
+            }
+        }
 
-            // done
+        private void LoopThrough()
+        {
+            var next = this.start;
+            
+            while (next != null)
+            {
+                List<int> nextMoves;
+
+                if (next.NextMoves != null) // next got called by next.next
+                {
+                    nextMoves = new List<int>(next.NextMoves);
+                }
+                else
+                {
+                    nextMoves = new List<int>(next.Moves);
+                }
+
+                List<int> temp = new List<int>();
+                bool addToTemp = false;
+                for (int i = 0; i < nextMoves.Count; i++)
+                {
+                    if (rules.CheckValid(next.Y, next.X, nextMoves[i])) // is valid go to next move
+                    {
+                        if (addToTemp)
+                        {
+                            temp.Add(nextMoves[i]);
+                        }
+                        else
+                        {
+                            addToTemp = true;
+                            this.output[next.Y, next.X] = nextMoves[i];
+                            rules.AddToGrid(next.Y, next.X, nextMoves[i]);    
+                        }
+                    }
+                }
+                if (!addToTemp) // can't place a value
+                {
+                    var prev = next.Previous;
+                    if (prev != null)
+                    {
+                        // do move undone
+                        int value = this.output[prev.Y, prev.X];
+                        this.output[prev.Y, prev.X] = 0;
+                        rules.RemoveFromGrid(prev.Y, prev.X, value);
+                        next.NextMoves = null;
+
+                        next = prev;
+                    }
+                }
+                else
+                {
+                    next.NextMoves = temp;
+                    next = next.Next;
+                } 
+            }
+         
+            View.Write(this.output);
         }
 
         private void DebugPrintAll()

@@ -105,5 +105,17 @@ namespace Sudoku
                 this.grids.Add(key, l);
             }
         }
+
+        public void RemoveFromGrid(int y, int x, int value)
+        {
+            int hX = x / 3;
+            int vY = y / 3;
+            string key = hX + "" + vY;
+
+            if (this.grids.ContainsKey(key))
+            {
+                this.grids[key].Remove(value);
+            }
+        }
     }
 }
