@@ -8,6 +8,7 @@ namespace Sudoku
 {
     class Algorithm
     {
+        private int steps;
         private int[,] input;
         public int[,] output;
         private Rules rules;
@@ -32,7 +33,6 @@ namespace Sudoku
         public void Start()
         {
             this.fillup = true;
-            int steps = 1;
             if (Program.feedback)
             {
                 Console.WriteLine("Filling up all the one move set tiles...");
@@ -43,10 +43,10 @@ namespace Sudoku
                 this.UpdatePossible();
                 if (Program.feedback)
                 {
-                    Console.WriteLine("Step " + steps);
+                    Console.WriteLine("Step " + this.steps);
                     View.Write(this.output);
+                    Thread.Sleep(400);
                 }
-                steps++;
             }
 
             this.CreatePossible();
@@ -55,7 +55,7 @@ namespace Sudoku
             {
                 if (this.IsCompleted())
                 {
-                    Console.WriteLine("Solution found!");
+                    Console.WriteLine("Solution found!(" + steps + ")");
                     View.Write(this.output);
                 }
                 else
@@ -122,6 +122,7 @@ namespace Sudoku
                 var m = new LinkedMoves(key, l);
                 this.possibleMoves.Add(key, m);
             }
+            this.steps++;
         }
 
         private void UpdatePossible()
@@ -149,7 +150,7 @@ namespace Sudoku
         {
             if (Program.feedback)
             {
-                Console.WriteLine("Ordering...");
+                Console.WriteLine("Sorting...");
             }
             this.order = new string[this.possibleMoves.Count];
 
@@ -189,13 +190,17 @@ namespace Sudoku
         private void LoopThrough()
         {
             var next = this.start;
+            string placed = null;
             
             while (next != null)
             {
                 if (Program.feedback)
                 {
                     Console.WriteLine("==================================================================");
+                    Console.WriteLine("Step " + steps);
                     Console.WriteLine("(" + next.Y + "" + next.X + ") Amount of moves: " + next.Moves.Count);
+                    View.Write(this.output, placed);
+                    Console.WriteLine();
                 }
                 List<int> nextMoves;
 
@@ -228,7 +233,7 @@ namespace Sudoku
                             if (Program.feedback)
                             {
                                 Console.WriteLine("Succesfully placed: " + nextMoves[i]);
-                                View.Write(this.output);
+                                placed = next.Y + "" + next.X;
                             }
                         }
                     }
@@ -243,13 +248,12 @@ namespace Sudoku
                         this.output[prev.Y, prev.X] = 0;
                         rules.RemoveFromGrid(prev.Y, prev.X, value);
                         next.NextMoves = null;
-
+                        placed = null;
                         next = prev;
 
                         if (Program.feedback)
                         {
                             Console.WriteLine("Failed placing any values! Removing: " + value + " from (" + prev.Y + "" + prev.X + ")");
-                            View.Write(this.output);
                         }
                     }
                     else
@@ -262,10 +266,11 @@ namespace Sudoku
                 {
                     next.NextMoves = temp;
                     next = next.Next;
-                } 
+                }
+                this.steps++;
             }
-
-            Console.WriteLine("Solution found!");
+            Console.WriteLine();
+            Console.WriteLine("Solution found!(" + this.steps + ")");
             View.Write(this.output);
         }
     }
